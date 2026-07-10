@@ -1,0 +1,903 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Compras da Padaria</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f3ea;
+      --surface: #fffdf8;
+      --surface-strong: #fff7e8;
+      --ink: #2d251b;
+      --muted: #766b5b;
+      --line: #ded1bd;
+      --brand: #b8462f;
+      --brand-dark: #843525;
+      --green: #2f7d55;
+      --yellow: #e7b44f;
+      --shadow: 0 16px 45px rgba(71, 45, 22, 0.12);
+      --radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(120deg, rgba(184, 70, 47, 0.08), transparent 38%),
+        linear-gradient(250deg, rgba(47, 125, 85, 0.08), transparent 40%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 12px 0 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      background: var(--brand);
+      color: #fff8e9;
+      border-radius: 50%;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    .mark svg {
+      width: 31px;
+      height: 31px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 640px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tabs {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      background: #eadcc6;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 3px;
+      margin: 22px 0;
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: var(--surface);
+      color: var(--brand-dark);
+      box-shadow: 0 5px 14px rgba(82, 54, 22, 0.1);
+    }
+
+    .tab svg,
+    .icon-btn svg,
+    .primary svg,
+    .ghost svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.1;
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(255, 253, 248, 0.88);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 247, 232, 0.76);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .panel-note {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.4;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: minmax(180px, 1.5fr) minmax(120px, 0.7fr) minmax(120px, 0.7fr) auto;
+      gap: 10px;
+      padding: 18px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.83rem;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fffefb;
+      color: var(--ink);
+      padding: 0 12px;
+      outline: 0;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(184, 70, 47, 0.14);
+    }
+
+    .primary,
+    .ghost,
+    .icon-btn {
+      border: 1px solid transparent;
+      border-radius: 7px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+    }
+
+    .primary {
+      padding: 0 16px;
+      background: var(--brand);
+      color: white;
+    }
+
+    .primary:hover {
+      background: var(--brand-dark);
+    }
+
+    .ghost {
+      padding: 0 13px;
+      background: #fffdf8;
+      border-color: var(--line);
+      color: var(--brand-dark);
+    }
+
+    .ghost:hover {
+      background: var(--surface-strong);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      background: transparent;
+      color: var(--muted);
+      border-color: transparent;
+      flex: 0 0 auto;
+    }
+
+    .icon-btn:hover {
+      background: #f2e6d4;
+      color: var(--brand-dark);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px 18px;
+    }
+
+    .search {
+      max-width: 370px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fffefb;
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 680px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      background: rgba(255, 253, 248, 0.9);
+    }
+
+    td strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .row-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .empty {
+      padding: 36px 18px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      min-height: 62px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffefb;
+    }
+
+    .check-item.done {
+      background: #f0f7ef;
+      border-color: rgba(47, 125, 85, 0.36);
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      min-height: 22px;
+      accent-color: var(--green);
+    }
+
+    .check-name {
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .check-item.done .check-name {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .check-detail {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-top: 4px;
+    }
+
+    .quantity-badge {
+      min-width: 92px;
+      min-height: 36px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7ecd8;
+      border-radius: 999px;
+      font-weight: 800;
+      color: var(--brand-dark);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .progress-line {
+      height: 10px;
+      background: #eadcc6;
+      border-radius: 999px;
+      overflow: hidden;
+      min-width: min(100%, 360px);
+    }
+
+    .progress-line span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 0.2s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      header,
+      .panel-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .tabs {
+        width: 100%;
+      }
+
+      .tab {
+        padding: 0 10px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .primary {
+        width: 100%;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .search {
+        max-width: none;
+      }
+
+      .summary {
+        width: 100%;
+      }
+
+      .check-item {
+        grid-template-columns: 28px 1fr;
+      }
+
+      .quantity-badge {
+        grid-column: 2;
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 12c0-3.3 2.7-6 6-6s6 2.7 6 6v5H6z"></path>
+            <path d="M4 17h16"></path>
+            <path d="M9 6.8V5.5a3 3 0 0 1 6 0v1.3"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>Compras da Padaria</h1>
+          <p class="subtitle">Organize os insumos, quantidades e unidades. Depois use a lista em checklist na hora de comprar.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="ghost" id="printBtn" type="button" title="Imprimir lista">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 9V2h12v7"></path>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <path d="M6 14h12v8H6z"></path>
+          </svg>
+          Imprimir
+        </button>
+        <button class="ghost" id="clearListBtn" type="button" title="Limpar checklist do pedido">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 6h18"></path>
+            <path d="M8 6V4h8v2"></path>
+            <path d="M19 6l-1 14H6L5 6"></path>
+            <path d="M10 11v5"></path>
+            <path d="M14 11v5"></path>
+          </svg>
+          Limpar lista
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Abas do sistema">
+      <button class="tab active" id="inventoryTab" type="button" aria-controls="inventoryView">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 17h16"></path>
+        </svg>
+        Insumos
+      </button>
+      <button class="tab" id="checklistTab" type="button" aria-controls="checklistView">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        Checklist
+      </button>
+    </nav>
+
+    <main>
+      <section class="panel" id="inventoryView">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Lista personalizável de insumos</h2>
+            <p class="panel-note">Cadastre nome, unidade e quantidade. Os dados ficam salvos neste navegador.</p>
+          </div>
+          <div class="summary" id="inventorySummary"></div>
+        </div>
+
+        <form class="form-grid" id="itemForm">
+          <input type="hidden" id="editingId">
+          <label>
+            Nome do insumo
+            <input id="nameInput" type="text" placeholder="Farinha de trigo" autocomplete="off" required>
+          </label>
+          <label>
+            Unidade
+            <select id="unitInput" required>
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="L">L</option>
+              <option value="ml">ml</option>
+              <option value="un">un</option>
+              <option value="cx">cx</option>
+              <option value="pct">pct</option>
+              <option value="saco">saco</option>
+            </select>
+          </label>
+          <label>
+            Quantidade
+            <input id="quantityInput" type="number" min="0" step="0.01" placeholder="10" required>
+          </label>
+          <button class="primary" id="saveBtn" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <path d="M17 21v-8H7v8"></path>
+              <path d="M7 3v5h8"></path>
+            </svg>
+            Salvar
+          </button>
+        </form>
+
+        <div class="toolbar">
+          <input class="search" id="searchInput" type="search" placeholder="Buscar insumo">
+          <button class="ghost" id="sampleBtn" type="button" title="Adicionar exemplo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+            Exemplo
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Insumo</th>
+                <th>Unidade</th>
+                <th>Quantidade</th>
+                <th aria-label="Ações"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsTable"></tbody>
+          </table>
+          <div class="empty hidden" id="emptyInventory">Nenhum insumo cadastrado ainda.</div>
+        </div>
+      </section>
+
+      <section class="panel hidden" id="checklistView">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Checklist para compras</h2>
+            <p class="panel-note">Marque os itens conforme forem comprados. O progresso também fica salvo.</p>
+          </div>
+          <div class="summary">
+            <span class="pill" id="progressText">0 de 0 comprados</span>
+            <span class="progress-line" aria-hidden="true"><span id="progressBar"></span></span>
+          </div>
+        </div>
+        <div class="checklist" id="checklist"></div>
+        <div class="empty hidden" id="emptyChecklist">Adicione itens pela aba Insumos para montar a lista de compras.</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const storageKey = 'padaria-compras-insumos-v1';
+    const checkedKey = 'padaria-compras-checks-v1';
+    const activeListKey = 'padaria-compras-lista-atual-v1';
+
+    const defaultItems = [
+      { id: crypto.randomUUID(), name: 'Farinha de trigo', unit: 'kg', quantity: 25 },
+      { id: crypto.randomUUID(), name: 'Fermento biológico', unit: 'g', quantity: 500 },
+      { id: crypto.randomUUID(), name: 'Açúcar', unit: 'kg', quantity: 10 },
+      { id: crypto.randomUUID(), name: 'Manteiga', unit: 'kg', quantity: 5 }
+    ];
+
+    const state = {
+      items: loadItems(),
+      activeIds: loadActiveIds(),
+      checked: loadChecked(),
+      search: ''
+    };
+
+    const els = {
+      inventoryTab: document.querySelector('#inventoryTab'),
+      checklistTab: document.querySelector('#checklistTab'),
+      inventoryView: document.querySelector('#inventoryView'),
+      checklistView: document.querySelector('#checklistView'),
+      form: document.querySelector('#itemForm'),
+      editingId: document.querySelector('#editingId'),
+      nameInput: document.querySelector('#nameInput'),
+      unitInput: document.querySelector('#unitInput'),
+      quantityInput: document.querySelector('#quantityInput'),
+      saveBtn: document.querySelector('#saveBtn'),
+      searchInput: document.querySelector('#searchInput'),
+      table: document.querySelector('#itemsTable'),
+      checklist: document.querySelector('#checklist'),
+      inventorySummary: document.querySelector('#inventorySummary'),
+      progressText: document.querySelector('#progressText'),
+      progressBar: document.querySelector('#progressBar'),
+      emptyInventory: document.querySelector('#emptyInventory'),
+      emptyChecklist: document.querySelector('#emptyChecklist'),
+      sampleBtn: document.querySelector('#sampleBtn'),
+      clearListBtn: document.querySelector('#clearListBtn'),
+      printBtn: document.querySelector('#printBtn')
+    };
+
+    els.inventoryTab.addEventListener('click', () => setTab('inventory'));
+    els.checklistTab.addEventListener('click', () => setTab('checklist'));
+    els.form.addEventListener('submit', saveItem);
+    els.searchInput.addEventListener('input', (event) => {
+      state.search = event.target.value.trim().toLowerCase();
+      renderInventory();
+    });
+    els.sampleBtn.addEventListener('click', addSampleItems);
+    els.clearListBtn.addEventListener('click', clearList);
+    els.printBtn.addEventListener('click', () => window.print());
+
+    render();
+
+    function loadItems() {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      return Array.isArray(saved) ? saved : defaultItems;
+    }
+
+    function loadChecked() {
+      const saved = JSON.parse(localStorage.getItem(checkedKey) || '{}');
+      return saved && typeof saved === 'object' ? saved : {};
+    }
+
+    function loadActiveIds() {
+      const saved = JSON.parse(localStorage.getItem(activeListKey) || 'null');
+      if (Array.isArray(saved)) {
+        return saved;
+      }
+      return loadItems().map((item) => item.id);
+    }
+
+    function persist() {
+      localStorage.setItem(storageKey, JSON.stringify(state.items));
+      localStorage.setItem(activeListKey, JSON.stringify(state.activeIds));
+      localStorage.setItem(checkedKey, JSON.stringify(state.checked));
+    }
+
+    function setTab(tab) {
+      const showInventory = tab === 'inventory';
+      els.inventoryTab.classList.toggle('active', showInventory);
+      els.checklistTab.classList.toggle('active', !showInventory);
+      els.inventoryView.classList.toggle('hidden', !showInventory);
+      els.checklistView.classList.toggle('hidden', showInventory);
+    }
+
+    function saveItem(event) {
+      event.preventDefault();
+      const name = els.nameInput.value.trim();
+      const unit = els.unitInput.value;
+      const quantity = Number(els.quantityInput.value);
+
+      if (!name || !unit || Number.isNaN(quantity)) {
+        return;
+      }
+
+      const existingId = els.editingId.value;
+      if (existingId) {
+        state.items = state.items.map((item) => item.id === existingId ? { ...item, name, unit, quantity } : item);
+      } else {
+        const newItem = { id: crypto.randomUUID(), name, unit, quantity };
+        state.items.push(newItem);
+        addItemToActiveList(newItem.id);
+      }
+
+      els.form.reset();
+      els.editingId.value = '';
+      els.saveBtn.lastChild.textContent = ' Salvar';
+      persist();
+      render();
+      els.nameInput.focus();
+    }
+
+    function editItem(id) {
+      const item = state.items.find((entry) => entry.id === id);
+      if (!item) return;
+      els.editingId.value = item.id;
+      els.nameInput.value = item.name;
+      els.unitInput.value = item.unit;
+      els.quantityInput.value = item.quantity;
+      els.saveBtn.lastChild.textContent = ' Atualizar';
+      setTab('inventory');
+      els.nameInput.focus();
+    }
+
+    function removeItem(id) {
+      state.items = state.items.filter((item) => item.id !== id);
+      state.activeIds = state.activeIds.filter((activeId) => activeId !== id);
+      delete state.checked[id];
+      persist();
+      render();
+    }
+
+    function addToChecklist(id) {
+      addItemToActiveList(id);
+      persist();
+      render();
+    }
+
+    function addItemToActiveList(id) {
+      if (!state.activeIds.includes(id)) {
+        state.activeIds.push(id);
+      }
+    }
+
+    function toggleChecked(id, value) {
+      state.checked[id] = value;
+      persist();
+      renderChecklist();
+    }
+
+    function clearList() {
+      if (state.activeIds.length === 0) {
+        return;
+      }
+      if (!confirm('Deseja limpar o checklist deste pedido? Os insumos cadastrados continuam salvos.')) {
+        return;
+      }
+      state.activeIds = [];
+      state.checked = {};
+      persist();
+      render();
+    }
+
+    function addSampleItems() {
+      const names = new Set(state.items.map((item) => item.name.toLowerCase()));
+      defaultItems.forEach((item) => {
+        if (!names.has(item.name.toLowerCase())) {
+          const sampleItem = { ...item, id: crypto.randomUUID() };
+          state.items.push(sampleItem);
+          addItemToActiveList(sampleItem.id);
+        }
+      });
+      persist();
+      render();
+    }
+
+    function render() {
+      renderInventory();
+      renderChecklist();
+    }
+
+    function renderInventory() {
+      const filtered = state.items.filter((item) => item.name.toLowerCase().includes(state.search));
+      els.table.innerHTML = filtered.map((item) => `
+        <tr>
+          <td><strong>${escapeHtml(item.name)}</strong></td>
+          <td>${escapeHtml(item.unit)}</td>
+          <td>${formatQuantity(item.quantity)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" type="button" title="Editar ${escapeHtml(item.name)}" onclick="editItem('${item.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path>
+                </svg>
+              </button>
+              <button class="icon-btn" type="button" title="Adicionar ao checklist ${escapeHtml(item.name)}" onclick="addToChecklist('${item.id}')" ${state.activeIds.includes(item.id) ? 'disabled' : ''}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+              </button>
+              <button class="icon-btn" type="button" title="Excluir ${escapeHtml(item.name)}" onclick="removeItem('${item.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 6h18"></path>
+                  <path d="M8 6V4h8v2"></path>
+                  <path d="M19 6l-1 14H6L5 6"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      els.emptyInventory.classList.toggle('hidden', state.items.length > 0);
+      els.inventorySummary.innerHTML = `
+        <span class="pill">${state.items.length} itens</span>
+        <span class="pill">${getActiveItems().length} no checklist</span>
+        <span class="pill">${filtered.length} visíveis</span>
+      `;
+    }
+
+    function renderChecklist() {
+      const activeItems = getActiveItems();
+      const checkedCount = activeItems.filter((item) => state.checked[item.id]).length;
+      const total = activeItems.length;
+      const progress = total ? Math.round((checkedCount / total) * 100) : 0;
+
+      els.progressText.textContent = `${checkedCount} de ${total} comprados`;
+      els.progressBar.style.width = `${progress}%`;
+      els.emptyChecklist.classList.toggle('hidden', total > 0);
+      els.checklist.innerHTML = activeItems.map((item) => {
+        const done = Boolean(state.checked[item.id]);
+        return `
+          <label class="check-item ${done ? 'done' : ''}">
+            <input type="checkbox" ${done ? 'checked' : ''} onchange="toggleChecked('${item.id}', this.checked)">
+            <span>
+              <span class="check-name">${escapeHtml(item.name)}</span>
+            </span>
+            <span class="quantity-badge">${formatQuantity(item.quantity)} ${escapeHtml(item.unit)}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function getActiveItems() {
+      const availableIds = new Set(state.items.map((item) => item.id));
+      state.activeIds = state.activeIds.filter((id) => availableIds.has(id));
+      return state.activeIds
+        .map((id) => state.items.find((item) => item.id === id))
+        .filter(Boolean);
+    }
+
+    function formatQuantity(value) {
+      return Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
