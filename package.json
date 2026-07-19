@@ -1,2 +1,5 @@
-.vercel
-node_modules
+{
+  "name": "compras-padaria",
+  "version": "1.0.0",
+  "private": true
+}
